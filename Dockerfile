@@ -1,15 +1,15 @@
 FROM ubuntu:20.04 as base
 
 # MongoDB download URL
-ARG DB_URL=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.0.5.tgz
+ARG DB_URL=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-6.0.5.tgz
 
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y curl && \
     curl -OL ${DB_URL} && \
-    tar -zxvf mongodb-linux-x86_64-ubuntu2004-5.0.5.tgz && \
-    mv ./mongodb-linux-x86_64-ubuntu2004-5.0.5/bin/* /usr/local/bin/ && \
-    rm -rf ./mongodb-linux-x86_64-ubuntu2004-5.0.5 && rm ./mongodb-linux-x86_64-ubuntu2004-5.0.5.tgz
+    tar -zxvf mongodb-linux-x86_64-ubuntu2004-6.0.5.tgz && \
+    mv ./mongodb-linux-x86_64-ubuntu2004-6.0.5/bin/* /usr/local/bin/ && \
+    rm -rf ./mongodb-linux-x86_64-ubuntu2004-6.0.5 && rm ./mongodb-linux-x86_64-ubuntu2004-6.0.5.tgz
 
 COPY ./init-mongodbs.sh ./init-replica.sh ./entry-point.sh /
 
@@ -29,16 +29,8 @@ ARG DB3_LOG_DIR=/var/log/mongodb3
 
 # DB Ports
 ARG DB1_PORT=27017
-ARG DB2_PORT=27018
-ARG DB3_PORT=27019
-
-# MongoDB Admin Credentials
-ARG MONGO_INITDB_ROOT_USERNAME=admin
-ARG MONGO_INITDB_ROOT_PASSWORD=password
-
-# Additional MongoDB User Credentials
-ARG MONGO_DB_USERNAME=user
-ARG MONGO_DB_PASSWORD=password
+ARG DB1_PORT=27018
+ARG DB1_PORT=27019
 
 RUN mkdir -p ${DB1_DATA_DIR} && \
     mkdir -p ${DB1_LOG_DIR} && \
@@ -52,13 +44,6 @@ RUN mkdir -p ${DB1_DATA_DIR} && \
     chown `whoami` ${DB2_LOG_DIR} && \
     chown `whoami` ${DB3_DATA_DIR} && \
     chown `whoami` ${DB3_LOG_DIR}
-
-# Start MongoDB
-RUN mongod --fork --logpath /var/log/mongod.log && \
-    sleep 5 && \
-    mongo admin --eval "db.createUser({ user: '${MONGO_INITDB_ROOT_USERNAME}', pwd: '${MONGO_INITDB_ROOT_PASSWORD}', roles: ['root'] });" && \
-    mongo admin -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} --eval "db.createUser({ user: '${MONGO_DB_USERNAME}', pwd: '${MONGO_DB_PASSWORD}', roles: ['readWrite'] });" && \
-    mongod --shutdown
 
 EXPOSE ${DB1_PORT}
 EXPOSE ${DB2_PORT}
