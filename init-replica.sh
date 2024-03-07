@@ -4,7 +4,7 @@ DB1_PORT=27017
 DB2_PORT=27018
 DB3_PORT=27019
 
-LOCAL_HOST="${HOST:-localhost}"
+LOCAL_HOST="${HOST:-128.199.216.180}"
 REPLICA_SET="${REPLICA_SET_NAME:-rs0}"
 
 RS_MEMBER_1="{ \"_id\": 0, \"host\": \"${LOCAL_HOST}:${DB1_PORT}\", \"priority\": 2 }"
