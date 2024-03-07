@@ -29,20 +29,21 @@ ARG DB3_LOG_DIR=/var/log/mongodb3
 
 # DB Ports
 ARG DB1_PORT=27017
-ARG DB2_PORT=27018
-ARG DB3_PORT=27019
+ARG DB1_PORT=27018
+ARG DB1_PORT=27019
 
-# Create volumes
-VOLUME ${DB1_DATA_DIR}
-VOLUME ${DB2_DATA_DIR}
-VOLUME ${DB3_DATA_DIR}
-
-RUN mkdir -p ${DB1_LOG_DIR} && \
+RUN mkdir -p ${DB1_DATA_DIR} && \
+    mkdir -p ${DB1_LOG_DIR} && \
+    mkdir -p ${DB2_DATA_DIR} && \
     mkdir -p ${DB2_LOG_DIR} && \
+    mkdir -p ${DB3_DATA_DIR} && \
     mkdir -p ${DB3_LOG_DIR} && \
-    chown -R `whoami` ${DB1_LOG_DIR} && \
-    chown -R `whoami` ${DB2_LOG_DIR} && \
-    chown -R `whoami` ${DB3_LOG_DIR}
+    chown `whoami` ${DB1_DATA_DIR} && \
+    chown `whoami` ${DB1_LOG_DIR} && \
+    chown `whoami` ${DB2_DATA_DIR} && \
+    chown `whoami` ${DB2_LOG_DIR} && \
+    chown `whoami` ${DB3_DATA_DIR} && \
+    chown `whoami` ${DB3_LOG_DIR}
 
 EXPOSE ${DB1_PORT}
 EXPOSE ${DB2_PORT}
