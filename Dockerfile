@@ -29,16 +29,16 @@ ARG DB3_LOG_DIR=/var/log/mongodb3
 
 # DB Ports
 ARG DB1_PORT=27017
-ARG DB1_PORT=27018
-ARG DB1_PORT=27019
+ARG DB2_PORT=27018
+ARG DB3_PORT=27019
 
 # MongoDB Admin Credentials
 ARG MONGO_INITDB_ROOT_USERNAME=admin
-ARG MONGO_INITDB_ROOT_PASSWORD=123456
+ARG MONGO_INITDB_ROOT_PASSWORD=password
 
 # Additional MongoDB User Credentials
 ARG MONGO_DB_USERNAME=user
-ARG MONGO_DB_PASSWORD=123456
+ARG MONGO_DB_PASSWORD=password
 
 RUN mkdir -p ${DB1_DATA_DIR} && \
     mkdir -p ${DB1_LOG_DIR} && \
@@ -53,12 +53,12 @@ RUN mkdir -p ${DB1_DATA_DIR} && \
     chown `whoami` ${DB3_DATA_DIR} && \
     chown `whoami` ${DB3_LOG_DIR}
 
-# Start MongoDB and Create User
+# Start MongoDB
 RUN mongod --fork --logpath /var/log/mongod.log && \
+    sleep 5 && \
     mongo admin --eval "db.createUser({ user: '${MONGO_INITDB_ROOT_USERNAME}', pwd: '${MONGO_INITDB_ROOT_PASSWORD}', roles: ['root'] });" && \
     mongo admin -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} --eval "db.createUser({ user: '${MONGO_DB_USERNAME}', pwd: '${MONGO_DB_PASSWORD}', roles: ['readWrite'] });" && \
     mongod --shutdown
-
 
 EXPOSE ${DB1_PORT}
 EXPOSE ${DB2_PORT}
